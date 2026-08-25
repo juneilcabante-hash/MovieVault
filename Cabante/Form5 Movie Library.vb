@@ -5,6 +5,7 @@ Public Class Form5_Movie_Library
 
     ' MongoDB connection
     Private client As New MongoClient("mongodb://localhost:27017")
+
     Private database As IMongoDatabase =
         client.GetDatabase("ProjectAdvanceDB")
 
@@ -12,54 +13,106 @@ Public Class Form5_Movie_Library
         database.GetCollection(Of BsonDocument)("MovieVault")
 
 
+    ' ==========================================
     ' FORM LOAD
+    ' ==========================================
+
     Private Sub Form5_Movie_Library_Load(
         sender As Object,
         e As EventArgs
     ) Handles MyBase.Load
 
-        ' Create DataGridView columns if they don't exist
-        If dgvMovies.Columns.Count = 0 Then
-
-            dgvMovies.Columns.Add("colTitle", "Movie Title")
-            dgvMovies.Columns.Add("colGenre", "Genre")
-            dgvMovies.Columns.Add("colYear", "Release Year")
-            dgvMovies.Columns.Add("colDirector", "Director")
-            dgvMovies.Columns.Add("colDuration", "Duration")
-            dgvMovies.Columns.Add("colDescription", "Description")
-            dgvMovies.Columns.Add("colPosterURL", "Poster URL")
-
-            ' Set column widths
-            dgvMovies.Columns("colTitle").FillWeight = 18
-            dgvMovies.Columns("colGenre").FillWeight = 12
-            dgvMovies.Columns("colYear").FillWeight = 12
-            dgvMovies.Columns("colDirector").FillWeight = 16
-            dgvMovies.Columns("colDuration").FillWeight = 10
-            dgvMovies.Columns("colDescription").FillWeight = 15
-            dgvMovies.Columns("colPosterURL").FillWeight = 17
-
-        End If
-
-        ' Load movies
+        SetupMovieColumns()
         LoadMovies()
 
     End Sub
 
 
+    ' ==========================================
+    ' SETUP DATAGRIDVIEW COLUMNS
+    ' ==========================================
+
+    Private Sub SetupMovieColumns()
+
+        ' If columns already exist, don't create them again
+        If dgvMovies.Columns.Count > 0 Then
+            Return
+        End If
+
+
+        dgvMovies.Columns.Add(
+            "colTitle",
+            "Movie Title"
+        )
+
+        dgvMovies.Columns.Add(
+            "colGenre",
+            "Genre"
+        )
+
+        dgvMovies.Columns.Add(
+            "colYear",
+            "Release Year"
+        )
+
+        dgvMovies.Columns.Add(
+            "colDirector",
+            "Director"
+        )
+
+        dgvMovies.Columns.Add(
+            "colDuration",
+            "Duration"
+        )
+
+        dgvMovies.Columns.Add(
+            "colDescription",
+            "Description"
+        )
+
+        dgvMovies.Columns.Add(
+            "colPosterURL",
+            "Poster URL"
+        )
+
+
+        ' Column widths
+        dgvMovies.Columns("colTitle").FillWeight = 18
+        dgvMovies.Columns("colGenre").FillWeight = 12
+        dgvMovies.Columns("colYear").FillWeight = 12
+        dgvMovies.Columns("colDirector").FillWeight = 16
+        dgvMovies.Columns("colDuration").FillWeight = 10
+        dgvMovies.Columns("colDescription").FillWeight = 15
+        dgvMovies.Columns("colPosterURL").FillWeight = 17
+
+    End Sub
+
+
+    ' ==========================================
     ' LOAD MOVIES FROM MONGODB
+    ' ==========================================
+
     Private Sub LoadMovies()
 
         Try
 
-            ' Get all movies
-            Dim movies =
-                movieCollection.Find(New BsonDocument()).ToList()
+            ' IMPORTANT:
+            ' Make sure columns exist before adding rows
+            SetupMovieColumns()
 
-            ' Clear existing rows
+
+            ' Get movies from MongoDB
+            Dim movies =
+                movieCollection.Find(
+                    New BsonDocument()
+                ).ToList()
+
+
+            ' Clear old rows
             dgvMovies.Rows.Clear()
 
 
-            ' Add movies to DataGridView
+            ' Add movies
             For Each movie In movies
 
                 Dim title As String = ""
@@ -130,15 +183,22 @@ Public Class Form5_Movie_Library
     End Sub
 
 
+    ' ==========================================
     ' REFRESH MOVIE LIBRARY
+    ' ==========================================
+
     Public Sub RefreshMovies()
 
+        SetupMovieColumns()
         LoadMovies()
 
     End Sub
 
 
-    ' VIEW DETAILS BUTTON
+    ' ==========================================
+    ' VIEW DETAILS
+    ' ==========================================
+
     Private Sub btnViewDetails_Click(
         sender As Object,
         e As EventArgs
@@ -161,10 +221,12 @@ Public Class Form5_Movie_Library
 
         Try
 
-            ' Get selected movie
+            ' Get selected row
             Dim selectedRow As DataGridViewRow =
                 dgvMovies.SelectedRows(0)
 
+
+            ' Get movie title
             Dim title As String =
                 selectedRow.Cells("colTitle").Value.ToString()
 
@@ -174,6 +236,7 @@ Public Class Form5_Movie_Library
                 "title",
                 title
             )
+
 
             Dim movie As BsonDocument =
                 movieCollection.Find(filter).FirstOrDefault()
@@ -194,13 +257,15 @@ Public Class Form5_Movie_Library
             End If
 
 
-            ' Send movie to Form 7
+            ' Send movie to Form7
             Form7_Movie_Details.LoadMovie(movie)
 
-            ' Show Form 7
+
+            ' Show Form7
             Form7_Movie_Details.Show()
 
-            ' Hide Form 5
+
+            ' Hide Form5
             Me.Hide()
 
 
@@ -221,7 +286,10 @@ Public Class Form5_Movie_Library
     End Sub
 
 
+    ' ==========================================
     ' BACK TO DASHBOARD
+    ' ==========================================
+
     Private Sub btnBackDashboard_Click(
         sender As Object,
         e As EventArgs

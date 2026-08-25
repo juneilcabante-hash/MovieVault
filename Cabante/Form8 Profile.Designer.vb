@@ -38,6 +38,7 @@ Partial Class Form8_Profile
         TextBox4 = New TextBox()
         TextBox5 = New TextBox()
         PictureBox1 = New PictureBox()
+        btnLogout = New Button()
         CType(PictureBox1, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
@@ -199,6 +200,18 @@ Partial Class Form8_Profile
         PictureBox1.TabIndex = 15
         PictureBox1.TabStop = False
         ' 
+        ' btnLogout
+        ' 
+        btnLogout.BackColor = Color.Silver
+        btnLogout.BackgroundImageLayout = ImageLayout.None
+        btnLogout.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnLogout.Location = New Point(1591, 908)
+        btnLogout.Name = "btnLogout"
+        btnLogout.Size = New Size(178, 48)
+        btnLogout.TabIndex = 16
+        btnLogout.Text = "LOGOUT"
+        btnLogout.UseVisualStyleBackColor = False
+        ' 
         ' Form8_Profile
         ' 
         AutoScaleDimensions = New SizeF(9F, 20F)
@@ -206,6 +219,7 @@ Partial Class Form8_Profile
         BackgroundImage = CType(resources.GetObject("$this.BackgroundImage"), Image)
         BackgroundImageLayout = ImageLayout.Stretch
         ClientSize = New Size(1902, 1033)
+        Controls.Add(btnLogout)
         Controls.Add(PictureBox1)
         Controls.Add(TextBox5)
         Controls.Add(TextBox4)
@@ -244,4 +258,5 @@ Partial Class Form8_Profile
     Friend WithEvents TextBox4 As TextBox
     Friend WithEvents TextBox5 As TextBox
     Friend WithEvents PictureBox1 As PictureBox
+    Friend WithEvents btnLogout As Button
 End Class

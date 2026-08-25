@@ -1,105 +1,273 @@
-﻿Public Class Form4_Search_movie
+﻿Imports MongoDB.Bson
+Imports MongoDB.Driver
 
-    Private Sub Form4_Search_movie_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+Public Class Form4_Search_movie
 
-        'Create DataGridView columns
-        DataGridView1.Columns.Clear()
+    ' MongoDB connection
+    Private client As New MongoClient("mongodb://localhost:27017")
+    Private database As IMongoDatabase =
+        client.GetDatabase("ProjectAdvanceDB")
 
-        DataGridView1.Columns.Add("colTitle", "Movie Title")
-        DataGridView1.Columns.Add("colGenre", "Genre")
-        DataGridView1.Columns.Add("colYear", "Release Year")
-        DataGridView1.Columns.Add("colDirector", "Director")
+    Private movieCollection As IMongoCollection(Of BsonDocument) =
+        database.GetCollection(Of BsonDocument)("MovieVault")
 
-        'Movie data
-        DataGridView1.Rows.Add("Inception", "Sci-Fi, Thriller", "2010", "Christopher Nolan")
-        DataGridView1.Rows.Add("Interstellar", "Sci-Fi, Adventure", "2014", "Christopher Nolan")
-        DataGridView1.Rows.Add("The Dark Knight", "Action, Crime, Drama", "2008", "Christopher Nolan")
-        DataGridView1.Rows.Add("Avengers: Endgame", "Action, Adventure, Sci-Fi", "2019", "Anthony Russo, Joe Russo")
-        DataGridView1.Rows.Add("The Shawshank Redemption", "Drama", "1994", "Frank Darabont")
-        DataGridView1.Rows.Add("Forrest Gump", "Drama, Romance", "1994", "Robert Zemeckis")
-        DataGridView1.Rows.Add("The Godfather", "Crime, Drama", "1972", "Francis Ford Coppola")
-        DataGridView1.Rows.Add("Pulp Fiction", "Crime, Drama", "1994", "Quentin Tarantino")
 
-        'DataGridView settings
-        DataGridView1.ReadOnly = True
-        DataGridView1.AllowUserToAddRows = False
-        DataGridView1.AllowUserToDeleteRows = False
-        DataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect
-        DataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+    ' FORM LOAD
+    Private Sub Form4_Search_movie_Load(
+        sender As Object,
+        e As EventArgs
+    ) Handles MyBase.Load
+
+        ' Create DataGridView columns
+        If dgvSearchMovies.Columns.Count = 0 Then
+
+            dgvSearchMovies.Columns.Add(
+                "colTitle",
+                "Movie Title"
+            )
+
+            dgvSearchMovies.Columns.Add(
+                "colGenre",
+                "Genre"
+            )
+
+            dgvSearchMovies.Columns.Add(
+                "colYear",
+                "Release Year"
+            )
+
+            dgvSearchMovies.Columns.Add(
+                "colDirector",
+                "Director"
+            )
+
+            dgvSearchMovies.Columns.Add(
+                "colDuration",
+                "Duration"
+            )
+
+        End If
+
+        ' Make columns fill the DataGridView
+        dgvSearchMovies.AutoSizeColumnsMode =
+            DataGridViewAutoSizeColumnsMode.Fill
 
     End Sub
 
 
-    'DataGridView click
-    Private Sub DataGridView1_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataGridView1.CellContentClick
+    ' SEARCH MOVIE
+    Private Sub btnSearchMovie_Click(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnSearchMovie.Click
 
-    End Sub
+        Dim searchText As String =
+            txtSearchMovie.Text.Trim()
 
-
-    'Search box
-    Private Sub TextBox1_TextChanged(sender As Object, e As EventArgs) Handles TextBox1.TextChanged
-
-    End Sub
-
-
-    'SEARCH BUTTON
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-
-        Dim searchText As String = TextBox1.Text.Trim().ToLower()
-        Dim found As Boolean = False
-
-        'If search box is empty, show all movies
+        ' Check if search box is empty
         If searchText = "" Then
 
-            For Each row As DataGridViewRow In DataGridView1.Rows
-                row.Visible = True
-            Next
+            MessageBox.Show(
+                "Please enter a movie title.",
+                "Search Movie",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
 
             Return
 
         End If
 
-        'Search through movie information
-        For Each row As DataGridViewRow In DataGridView1.Rows
 
-            If row.IsNewRow Then Continue For
+        Try
 
-            Dim title As String = row.Cells("colTitle").Value.ToString().ToLower()
-            Dim genre As String = row.Cells("colGenre").Value.ToString().ToLower()
-            Dim year As String = row.Cells("colYear").Value.ToString().ToLower()
-            Dim director As String = row.Cells("colDirector").Value.ToString().ToLower()
+            ' Get all movies from MongoDB
+            Dim movies =
+                movieCollection.Find(
+                    New BsonDocument()
+                ).ToList()
 
-            If title.Contains(searchText) OrElse
-               genre.Contains(searchText) OrElse
-               year.Contains(searchText) OrElse
-               director.Contains(searchText) Then
+            ' Clear previous search results
+            dgvSearchMovies.Rows.Clear()
 
-                row.Visible = True
-                found = True
+            Dim found As Boolean = False
 
-            Else
 
-                row.Visible = False
+            ' Check every movie
+            For Each movie In movies
+
+                Dim title As String = ""
+                Dim genre As String = ""
+                Dim year As String = ""
+                Dim director As String = ""
+                Dim duration As String = ""
+
+
+                If movie.Contains("title") Then
+                    title = movie("title").ToString()
+                End If
+
+                If movie.Contains("genre") Then
+                    genre = movie("genre").ToString()
+                End If
+
+                If movie.Contains("releaseYear") Then
+                    year = movie("releaseYear").ToString()
+                End If
+
+                If movie.Contains("director") Then
+                    director = movie("director").ToString()
+                End If
+
+                If movie.Contains("duration") Then
+                    duration = movie("duration").ToString()
+                End If
+
+
+                ' Case-insensitive search
+                If title.IndexOf(
+                    searchText,
+                    StringComparison.OrdinalIgnoreCase
+                ) >= 0 Then
+
+                    dgvSearchMovies.Rows.Add(
+                        title,
+                        genre,
+                        year,
+                        director,
+                        duration
+                    )
+
+                    found = True
+
+                End If
+
+            Next
+
+
+            ' No results
+            If Not found Then
+
+                MessageBox.Show(
+                    "No movie found with the title: " &
+                    searchText,
+                    "Search Result",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                )
 
             End If
 
-        Next
 
-        'If no movie was found
-        If found = False Then
+        Catch ex As Exception
 
-            MessageBox.Show("Movie not found.",
-                            "Search Result",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information)
+            MessageBox.Show(
+                "Unable to search for the movie." &
+                Environment.NewLine &
+                Environment.NewLine &
+                ex.Message,
+                "Database Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            )
 
-        End If
+        End Try
 
     End Sub
 
 
-    'BACK TO DASHBOARD BUTTON
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+    ' VIEW DETAILS BUTTON
+    Private Sub btnViewDetails_Click(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnViewDetails.Click
+
+        ' Make sure a movie is selected
+        If dgvSearchMovies.SelectedRows.Count = 0 Then
+
+            MessageBox.Show(
+                "Please select a movie first.",
+                "No Movie Selected",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            )
+
+            Return
+
+        End If
+
+
+        Try
+
+            ' Get selected row
+            Dim selectedRow As DataGridViewRow =
+                dgvSearchMovies.SelectedRows(0)
+
+
+            ' Get movie title
+            Dim title As String =
+                selectedRow.Cells("colTitle").Value.ToString()
+
+
+            ' Find the movie in MongoDB
+            Dim filter As New BsonDocument(
+                "title",
+                title
+            )
+
+            Dim movie As BsonDocument =
+                movieCollection.Find(filter).FirstOrDefault()
+
+
+            ' Check if movie exists
+            If movie Is Nothing Then
+
+                MessageBox.Show(
+                    "Movie could not be found in the database.",
+                    "Movie Not Found",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                )
+
+                Return
+
+            End If
+
+
+            ' Send movie to Form 7
+            Form7_Movie_Details.LoadMovie(movie)
+
+
+            ' Open Form 7
+            Form7_Movie_Details.Show()
+
+
+            ' Hide Form 4
+            Me.Hide()
+
+
+        Catch ex As Exception
+
+            MessageBox.Show(
+                "Unable to load movie details." &
+                Environment.NewLine &
+                Environment.NewLine &
+                ex.Message,
+                "Database Error",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
+            )
+
+        End Try
+
+    End Sub
+
+
+    ' BACK TO DASHBOARD
+    Private Sub btnBackDashboard_Click(
+        sender As Object,
+        e As EventArgs
+    ) Handles btnBackDashboard.Click
 
         Form3MainDashboard.Show()
         Me.Hide()

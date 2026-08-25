@@ -23,22 +23,23 @@ Partial Class Form4_Search_movie
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form4_Search_movie))
-        TextBox1 = New TextBox()
+        txtSearchMovie = New TextBox()
         Label2 = New Label()
-        Button1 = New Button()
-        DataGridView1 = New DataGridView()
-        Button2 = New Button()
-        CType(DataGridView1, ComponentModel.ISupportInitialize).BeginInit()
+        btnSearchMovie = New Button()
+        dgvSearchMovies = New DataGridView()
+        btnBackDashboard = New Button()
+        btnViewDetails = New Button()
+        CType(dgvSearchMovies, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
-        ' TextBox1
+        ' txtSearchMovie
         ' 
-        TextBox1.Font = New Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        TextBox1.Location = New Point(376, 246)
-        TextBox1.Multiline = True
-        TextBox1.Name = "TextBox1"
-        TextBox1.Size = New Size(641, 44)
-        TextBox1.TabIndex = 1
+        txtSearchMovie.Font = New Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        txtSearchMovie.Location = New Point(376, 246)
+        txtSearchMovie.Multiline = True
+        txtSearchMovie.Name = "txtSearchMovie"
+        txtSearchMovie.Size = New Size(641, 44)
+        txtSearchMovie.TabIndex = 1
         ' 
         ' Label2
         ' 
@@ -52,35 +53,46 @@ Partial Class Form4_Search_movie
         Label2.TabIndex = 2
         Label2.Text = "Search Movie Title"
         ' 
-        ' Button1
+        ' btnSearchMovie
         ' 
-        Button1.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button1.Location = New Point(1023, 246)
-        Button1.Name = "Button1"
-        Button1.Size = New Size(159, 44)
-        Button1.TabIndex = 3
-        Button1.Text = "Search"
-        Button1.UseVisualStyleBackColor = True
+        btnSearchMovie.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnSearchMovie.Location = New Point(1023, 246)
+        btnSearchMovie.Name = "btnSearchMovie"
+        btnSearchMovie.Size = New Size(159, 44)
+        btnSearchMovie.TabIndex = 3
+        btnSearchMovie.Text = "Search"
+        btnSearchMovie.UseVisualStyleBackColor = True
         ' 
-        ' DataGridView1
+        ' dgvSearchMovies
         ' 
-        DataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridView1.Location = New Point(376, 296)
-        DataGridView1.Name = "DataGridView1"
-        DataGridView1.RowHeadersWidth = 51
-        DataGridView1.Size = New Size(1159, 546)
-        DataGridView1.TabIndex = 4
+        dgvSearchMovies.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvSearchMovies.Location = New Point(376, 296)
+        dgvSearchMovies.Name = "dgvSearchMovies"
+        dgvSearchMovies.RowHeadersWidth = 51
+        dgvSearchMovies.Size = New Size(1159, 546)
+        dgvSearchMovies.TabIndex = 4
         ' 
-        ' Button2
+        ' btnBackDashboard
         ' 
-        Button2.BackColor = Color.Silver
-        Button2.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
-        Button2.Location = New Point(1235, 848)
-        Button2.Name = "Button2"
-        Button2.Size = New Size(300, 54)
-        Button2.TabIndex = 5
-        Button2.Text = "Back to Dash board"
-        Button2.UseVisualStyleBackColor = False
+        btnBackDashboard.BackColor = Color.Silver
+        btnBackDashboard.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnBackDashboard.Location = New Point(1235, 848)
+        btnBackDashboard.Name = "btnBackDashboard"
+        btnBackDashboard.Size = New Size(300, 54)
+        btnBackDashboard.TabIndex = 5
+        btnBackDashboard.Text = "Back to Dash board"
+        btnBackDashboard.UseVisualStyleBackColor = False
+        ' 
+        ' btnViewDetails
+        ' 
+        btnViewDetails.BackColor = Color.Silver
+        btnViewDetails.Font = New Font("Segoe UI", 16.2F, FontStyle.Bold, GraphicsUnit.Point, CByte(0))
+        btnViewDetails.Location = New Point(376, 848)
+        btnViewDetails.Name = "btnViewDetails"
+        btnViewDetails.Size = New Size(300, 54)
+        btnViewDetails.TabIndex = 6
+        btnViewDetails.Text = "VIEW DETAILS"
+        btnViewDetails.UseVisualStyleBackColor = False
         ' 
         ' Form4_Search_movie
         ' 
@@ -89,20 +101,22 @@ Partial Class Form4_Search_movie
         BackgroundImage = CType(resources.GetObject("$this.BackgroundImage"), Image)
         BackgroundImageLayout = ImageLayout.Stretch
         ClientSize = New Size(1902, 1033)
-        Controls.Add(Button2)
-        Controls.Add(DataGridView1)
-        Controls.Add(Button1)
+        Controls.Add(btnViewDetails)
+        Controls.Add(btnBackDashboard)
+        Controls.Add(dgvSearchMovies)
+        Controls.Add(btnSearchMovie)
         Controls.Add(Label2)
-        Controls.Add(TextBox1)
+        Controls.Add(txtSearchMovie)
         Name = "Form4_Search_movie"
         Text = "Form4_Search_movie"
-        CType(DataGridView1, ComponentModel.ISupportInitialize).EndInit()
+        CType(dgvSearchMovies, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
     End Sub
-    Friend WithEvents TextBox1 As TextBox
+    Friend WithEvents txtSearchMovie As TextBox
     Friend WithEvents Label2 As Label
-    Friend WithEvents Button1 As Button
-    Friend WithEvents DataGridView1 As DataGridView
-    Friend WithEvents Button2 As Button
+    Friend WithEvents btnSearchMovie As Button
+    Friend WithEvents dgvSearchMovies As DataGridView
+    Friend WithEvents btnBackDashboard As Button
+    Friend WithEvents btnViewDetails As Button
 End Class
